@@ -11,7 +11,7 @@ jobs:
     permissions:
       contents: read
       # npm trusted publishing: npm trades this job's OIDC token for a short-lived
-      # publish credential, so no npm token is stored anywhere. Also signs provenance.
+      # credential, so no npm token is stored anywhere. Also signs provenance.
       id-token: write
 
     steps:
@@ -31,7 +31,7 @@ jobs:
         with:
           bun-version: 1.3.10
 
-      # Trusted publishing needs the npm CLI (11.5.1 or later), not `bun publish`.
+      # Staged publishing needs the npm CLI (11.15.0 or later), not `bun publish`.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -52,5 +52,8 @@ jobs:
       - name: Build package
         run: bun run build
 
-      - name: Publish to npm
-        run: npm publish --access public
+      # The trusted publisher may only stage: the version goes live once a maintainer
+      # approves it with 2FA, in the Staged Packages tab on npmjs.com or with
+      # `npm stage approve <stage-id>`.
+      - name: Stage the release on npm
+        run: npm stage publish
