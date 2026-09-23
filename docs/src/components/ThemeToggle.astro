@@ -56,6 +56,35 @@ import { Moon, Sun } from '@lucide/astro'
     syncButtons()
   }
 
+  // Where the reveal circle starts and how far it must grow, as percentages of the
+  // transition's snapshot area rather than pixels. Chrome on a HiDPI Linux screen paints
+  // px values in ::view-transition-new(root) as physical pixels, which halves the circle at
+  // 2x and moves it towards the top left; percentages resolve against the pseudo-element's
+  // own size, so they come out right whatever unit Chrome settles on.
+  function revealGeometry(button: HTMLButtonElement) {
+    // The snapshot area is the full viewport including scrollbars, at its largest height
+    // (mobile toolbars retracted). A fixed probe of that size gives its size and origin.
+    const probe = document.createElement('div')
+    probe.style.cssText =
+      'position:fixed;left:0;top:0;width:100vw;height:100lvh;visibility:hidden;pointer-events:none'
+    document.body.appendChild(probe)
+    const area = probe.getBoundingClientRect()
+    probe.remove()
+
+    const b = button.getBoundingClientRect()
+    const cx = b.left + b.width / 2 - area.left
+    const cy = b.top + b.height / 2 - area.top
+    // Distance to the farthest corner, over the reference length a percentage radius of
+    // circle() resolves against: sqrt(width^2 + height^2) / sqrt(2).
+    const farthest = Math.hypot(Math.max(cx, area.width - cx), Math.max(cy, area.height - cy))
+    const reference = Math.hypot(area.width, area.height) / Math.SQRT2
+    return {
+      x: (cx / area.width) * 100,
+      y: (cy / area.height) * 100,
+      radius: (farthest / reference) * 100,
+    }
+  }
+
   // Reveal the new theme in a circle spreading out from the pressed button.
   function switchTheme(button: HTMLButtonElement) {
     const next = root.dataset.theme === 'dark' ? 'light' : 'dark'
@@ -63,16 +92,13 @@ import { Moon, Sun } from '@lucide/astro'
       applyTheme(next)
       return
     }
-    const r = button.getBoundingClientRect()
-    const x = r.left + r.width / 2
-    const y = r.top + r.height / 2
-    const radius = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y))
+    const { x, y, radius } = revealGeometry(button)
     root.classList.add('theme-switching')
     const transition = document.startViewTransition(() => applyTheme(next))
     transition.ready
       .then(() => {
         root.animate(
-          { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${radius}px at ${x}px ${y}px)`] },
+          { clipPath: [`circle(0% at ${x}% ${y}%)`, `circle(${radius}% at ${x}% ${y}%)`] },
           {
             duration: 560,
             easing: 'cubic-bezier(0.2, 0.9, 0.25, 1)',
