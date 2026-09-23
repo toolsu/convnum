@@ -9,10 +9,10 @@ hero:
     dark: ../../../../public/images/logo/icon.svg
   actions:
     - text: 数字转换器
-      link: /zh-cn/tools/numeral-conversion/
+      link: /convnum/zh-cn/tools/numeral-conversion/
       icon: right-arrow
     - text: API 参考
-      link: /api/readme/
+      link: /convnum/api/readme/
       variant: minimal
     - text: GitHub
       link: https://github.com/toolsu/convnum
@@ -22,7 +22,6 @@ hero:
 
 import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
 import ProductLinks from '../../../components/ProductLinks.astro'
-import RangeTransformSection from '../../../components/RangeTransformSection.astro'
 
 ## 工具
 
@@ -87,13 +86,9 @@ anyToNumber('vingt-et-un') // 21
   </Card>
 </CardGrid>
 
-<h2 id="range-transform">Range &amp; Transform：VS Code 扩展</h2>
-
-<RangeTransformSection />
-
 ## 支持的类型
 
-`NumType` 汇总了库支持的所有表示形式。完整列表见[API 参考](/api/readme/)；也可以在[数字转换器](/zh-cn/tools/numeral-conversion/)和[序列生成器](/zh-cn/tools/sequence-generator/)中试用。每一种类型都可以作为 [Range & Transform](/zh-cn/range-transform/insert-sequence/) 中范围的起点。
+`NumType` 汇总了库支持的所有表示形式。完整列表见[API 参考](/convnum/api/readme/)；也可以在[数字转换器](/convnum/zh-cn/tools/numeral-conversion/)和[序列生成器](/convnum/zh-cn/tools/sequence-generator/)中试用。每一种类型都可以作为 [Range & Transform](https://toolsu.com/range-transform/zh-cn/insert-sequence/) 中范围的起点。
 
 | 名称 | `NumType` | 示例 |
 | --- | --- | --- |

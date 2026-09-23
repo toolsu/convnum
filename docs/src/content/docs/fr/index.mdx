@@ -9,10 +9,10 @@ hero:
     dark: ../../../../public/images/logo/icon.svg
   actions:
     - text: Convertisseur de nombres
-      link: /fr/tools/numeral-conversion/
+      link: /convnum/fr/tools/numeral-conversion/
       icon: right-arrow
     - text: Référence API
-      link: /api/readme/
+      link: /convnum/api/readme/
       variant: minimal
     - text: GitHub
       link: https://github.com/toolsu/convnum
@@ -22,7 +22,6 @@ hero:
 
 import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
 import ProductLinks from '../../../components/ProductLinks.astro'
-import RangeTransformSection from '../../../components/RangeTransformSection.astro'
 
 ## Outils
 
@@ -92,17 +91,13 @@ anyToNumber('vingt-et-un') // 21
   </Card>
 </CardGrid>
 
-<h2 id="range-transform">Range &amp; Transform pour VS Code</h2>
-
-<RangeTransformSection />
-
 ## Types pris en charge
 
 `NumType` regroupe toutes les représentations comprises par la bibliothèque. Consultez la
-[référence API](/api/readme/) pour la liste complète, puis essayez le
-[convertisseur de nombres](/fr/tools/numeral-conversion/) et le
-[générateur de séquences](/fr/tools/sequence-generator/). Chacune peut aussi servir de
-début de plage dans [Range & Transform](/fr/range-transform/insert-sequence/).
+[référence API](/convnum/api/readme/) pour la liste complète, puis essayez le
+[convertisseur de nombres](/convnum/fr/tools/numeral-conversion/) et le
+[générateur de séquences](/convnum/fr/tools/sequence-generator/). Chacune peut aussi servir de
+début de plage dans [Range & Transform](https://toolsu.com/range-transform/fr/insert-sequence/).
 
 | Nom | `NumType` | Exemples |
 | --- | --- | --- |

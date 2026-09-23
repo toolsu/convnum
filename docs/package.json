@@ -6,6 +6,7 @@
     "dev": "astro dev",
     "start": "astro dev",
     "build": "astro build",
+    "build:pages": "astro build && rm -rf out && mkdir -p out && mv dist out/convnum && printf '/ /convnum/ 302\\n' > out/_redirects",
     "preview": "astro preview",
     "astro": "astro"
   },

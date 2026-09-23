@@ -7,9 +7,13 @@ import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
 const [starlightTypeDoc, typeDocSidebarGroup] = createStarlightTypeDocPlugin()
 const libraryEntry = fileURLToPath(new URL('../src/index.ts', import.meta.url))
 
+// Served at https://toolsu.com/convnum/ through a Cloudflare Worker that forwards the
+// path to this site's Cloudflare Pages project. `build:pages` nests the output under
+// out/convnum/ so the Pages deployment has the same paths as production.
 // https://astro.build/config
 export default defineConfig({
-  site: 'https://convnum.tomchen.org',
+  site: 'https://toolsu.com',
+  base: '/convnum',
   vite: {
     resolve: {
       alias: [{ find: /^convnum$/, replacement: libraryEntry }],
@@ -117,23 +121,8 @@ export default defineConfig({
             'zh-CN': 'Range & Transform（VS Code 扩展）',
             fr: 'Range & Transform (VS Code)',
           },
-          items: [
-            {
-              label: 'Overview',
-              translations: { 'zh-CN': '概览', fr: 'Présentation' },
-              slug: 'range-transform',
-            },
-            {
-              label: 'Insert Sequence',
-              translations: { 'zh-CN': '插入序列', fr: 'Insérer une séquence' },
-              slug: 'range-transform/insert-sequence',
-            },
-            {
-              label: 'Transform Selections',
-              translations: { 'zh-CN': '变换选区', fr: 'Transformer les sélections' },
-              slug: 'range-transform/transform',
-            },
-          ],
+          link: 'https://toolsu.com/range-transform/',
+          attrs: { target: '_blank', rel: 'noopener' },
         },
         {
           ...typeDocSidebarGroup,

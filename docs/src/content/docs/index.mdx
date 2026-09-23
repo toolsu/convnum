@@ -9,10 +9,10 @@ hero:
     dark: ../../../public/images/logo/icon.svg
   actions:
     - text: Numeral Converter
-      link: /tools/numeral-conversion/
+      link: /convnum/tools/numeral-conversion/
       icon: right-arrow
     - text: API Reference
-      link: /api/readme/
+      link: /convnum/api/readme/
       variant: minimal
     - text: View on GitHub
       link: https://github.com/toolsu/convnum
@@ -22,7 +22,6 @@ hero:
 
 import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
 import ProductLinks from '../../components/ProductLinks.astro'
-import RangeTransformSection from '../../components/RangeTransformSection.astro'
 
 ## Tools
 
@@ -94,17 +93,13 @@ anyToNumber('vingt-et-un') // 21
   </Card>
 </CardGrid>
 
-<h2 id="range-transform">Range &amp; Transform for VS Code</h2>
-
-<RangeTransformSection />
-
 ## Supported Types
 
 `NumType` is the union of every representation the library understands. See the
-[API reference](/api/readme/) for the full list, and try them live in the
-[Numeral Converter](/tools/numeral-conversion/) and
-[Sequence Generator](/tools/sequence-generator/). Every one of them can also start a
-range in [Range & Transform](/range-transform/insert-sequence/).
+[API reference](/convnum/api/readme/) for the full list, and try them live in the
+[Numeral Converter](/convnum/tools/numeral-conversion/) and
+[Sequence Generator](/convnum/tools/sequence-generator/). Every one of them can also start a
+range in [Range & Transform](https://toolsu.com/range-transform/insert-sequence/).
 
 | Name | `NumType` | Examples |
 | --- | --- | --- |

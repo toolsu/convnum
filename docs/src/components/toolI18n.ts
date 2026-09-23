@@ -1,5 +1,12 @@
 export type ToolLocale = 'en' | 'zh-CN' | 'fr'
 
+/** The Range & Transform site, in the reader's language. */
+export const RANGE_TRANSFORM_URL: Record<ToolLocale, string> = {
+  en: 'https://toolsu.com/range-transform/',
+  'zh-CN': 'https://toolsu.com/range-transform/zh-cn/',
+  fr: 'https://toolsu.com/range-transform/fr/',
+}
+
 export const toolText = {
   en: {
     conversionFailed: 'Conversion failed',
@@ -53,16 +60,6 @@ export const toolText = {
     copyInstall: 'Copy install command',
     items: (n: number) => `${n} items`,
     heroEyebrow: 'Range & Transform brings convnum into your editor',
-    rtDemoLabel: 'Range & Transform demo',
-    rtHint: 'Enter to apply, Esc to cancel',
-    rtSelections: (n: number) => `${n} selections`,
-    rtScenarios: {
-      weekdays: 'Weekdays',
-      chinese: 'Chinese numerals',
-      dates: 'Dates',
-      arithmetic: 'Arithmetic',
-      anyNumeral: 'Any numeral',
-    },
   },
   'zh-CN': {
     conversionFailed: '转换失败',
@@ -116,16 +113,6 @@ export const toolText = {
     copyInstall: '复制安装命令',
     items: (n: number) => `${n} 项`,
     heroEyebrow: 'Range & Transform：在编辑器里使用 convnum',
-    rtDemoLabel: 'Range & Transform 演示',
-    rtHint: 'Enter 应用，Esc 取消',
-    rtSelections: (n: number) => `${n} 个选区`,
-    rtScenarios: {
-      weekdays: '星期',
-      chinese: '中文数字',
-      dates: '日期',
-      arithmetic: '算术',
-      anyNumeral: '任意数字',
-    },
   },
   fr: {
     conversionFailed: 'Échec de la conversion',
@@ -179,16 +166,6 @@ export const toolText = {
     copyInstall: 'Copier la commande d’installation',
     items: (n: number) => `${n} éléments`,
     heroEyebrow: 'Range & Transform : convnum dans votre éditeur',
-    rtDemoLabel: 'Démo de Range & Transform',
-    rtHint: 'Entrée pour appliquer, Échap pour annuler',
-    rtSelections: (n: number) => `${n} sélections`,
-    rtScenarios: {
-      weekdays: 'Jours',
-      chinese: 'Nombres chinois',
-      dates: 'Dates',
-      arithmetic: 'Calcul',
-      anyNumeral: 'Tout nombre',
-    },
   },
 } as const
 

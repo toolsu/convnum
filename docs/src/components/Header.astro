@@ -8,13 +8,14 @@ const shouldRenderSearch =
   config.pagefind ||
   config.components.Search !== '@astrojs/starlight/components/Search.astro'
 const homeHref = Astro.locals.starlightRoute.siteTitleHref
+const iconSrc = `${import.meta.env.BASE_URL.replace(/\/$/, '')}/images/logo/icon.svg`
 ---
 
 <div class="header">
   <div class="title-wrapper sl-flex">
     <span class="desktop-title"><SiteTitle /></span>
     <a class="mobile-title" href={homeHref} aria-label="convnum">
-      <img src="/images/logo/icon.svg" alt="convnum" width="32" height="32" />
+      <img src={iconSrc} alt="convnum" width="32" height="32" />
     </a>
   </div>
   <div class="sl-flex print:hidden">{shouldRenderSearch && <Search />}</div>

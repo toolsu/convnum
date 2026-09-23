@@ -11,7 +11,10 @@ const docs = await getCollection('docs')
 const docIds = new Set(docs.map((entry) => entry.id))
 const routeId = Astro.locals.starlightRoute.entry.id
 const currentLocale = Astro.locals.starlightRoute.locale ?? 'root'
-const path = Astro.url.pathname.replace(/^\/(zh-cn|fr)(?=\/|$)/, '') || '/'
+// Paths are served under the site's base, so strip it before looking at the locale.
+const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+const pathname = Astro.url.pathname.slice(base.length) || '/'
+const path = pathname.replace(/^\/(zh-cn|fr)(?=\/|$)/, '') || '/'
 const pageId = path === '/' ? '' : routeId.replace(/^(zh-cn|fr)\//, '')
 const languageLabel =
   currentLocale === 'zh-cn'
@@ -20,14 +23,14 @@ const languageLabel =
       ? 'Choisir la langue'
       : 'Choose language'
 const languages = [
-  { code: 'root', name: 'English', id: pageId || 'index', href: path },
+  { code: 'root', name: 'English', id: pageId || 'index', href: `${base}${path}` },
   {
     code: 'zh-cn',
     name: '简体中文',
     id: pageId ? `zh-cn/${pageId}` : 'zh-cn',
-    href: `/zh-cn${path}`,
+    href: `${base}/zh-cn${path}`,
   },
-  { code: 'fr', name: 'Français', id: pageId ? `fr/${pageId}` : 'fr', href: `/fr${path}` },
+  { code: 'fr', name: 'Français', id: pageId ? `fr/${pageId}` : 'fr', href: `${base}/fr${path}` },
 ].filter(({ id }) => docIds.has(id))
 const showMenu = languages.length > 1
 ---

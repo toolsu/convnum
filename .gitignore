@@ -9,6 +9,7 @@ dist/
 
 # Docs (Astro + Starlight)
 docs/dist/
+docs/out/
 docs/.astro/
 docs/src/content/docs/api/
 _pagefind/

@@ -1,7 +1,7 @@
 ---
 import { Icon } from '@astrojs/starlight/components'
 import HeroTicker from './HeroTicker.tsx'
-import { toolText, type ToolLocale } from './toolI18n'
+import { RANGE_TRANSFORM_URL, toolText, type ToolLocale } from './toolI18n'
 
 // Starlight's page-title anchor id (not exported publicly)
 const PAGE_TITLE_ID = '_top'
@@ -23,10 +23,10 @@ const installCommand = 'npm i convnum'
   </div>
 
   <div class="hero-x-copy">
-    <a class="hero-x-eyebrow" href="#range-transform">
+    <a class="hero-x-eyebrow" href={RANGE_TRANSFORM_URL[locale]}>
       <span class="hero-x-eyebrow-tag">VS Code</span>
       <span class="hero-x-eyebrow-text">{t.heroEyebrow}</span>
-      <Icon name="right-arrow" size="1rem" class="hero-x-eyebrow-icon" />
+      <Icon name="external" size="0.9rem" class="hero-x-eyebrow-icon" />
     </a>
     <h1 id={PAGE_TITLE_ID} data-page-title class="hero-x-title" set:html={title} />
     {tagline && <p class="hero-x-tagline" set:html={tagline} />}

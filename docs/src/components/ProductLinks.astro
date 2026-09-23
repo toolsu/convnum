@@ -1,8 +1,10 @@
 ---
 import { ArrowRightLeft, ArrowUpRight, ListOrdered, TextCursorInput } from '@lucide/astro'
+import { RANGE_TRANSFORM_URL } from './toolI18n'
 
 const routeLocale = Astro.locals.starlightRoute.locale
-const base = routeLocale ? `/${routeLocale}` : ''
+const root = import.meta.env.BASE_URL.replace(/\/$/, '')
+const base = routeLocale ? `${root}/${routeLocale}` : root
 const key = routeLocale === 'zh-cn' || routeLocale === 'fr' ? routeLocale : 'en'
 
 const text = {
@@ -32,14 +34,18 @@ const text = {
 const items = [
   { icon: ArrowRightLeft, tag: text.online, href: `${base}/tools/numeral-conversion/`, copy: text.converter },
   { icon: ListOrdered, tag: text.online, href: `${base}/tools/sequence-generator/`, copy: text.sequence },
-  { icon: TextCursorInput, tag: text.vscode, href: `${base}/range-transform/`, copy: text.rt, featured: true },
+  { icon: TextCursorInput, tag: text.vscode, href: RANGE_TRANSFORM_URL[key === 'zh-cn' ? 'zh-CN' : key], copy: text.rt, featured: true, external: true },
 ]
 ---
 
 <div class="product-links not-content">
   {
-    items.map(({ icon: IconCmp, tag, href, copy: [title, body], featured }) => (
-      <a class:list={['card', 'product-link', { 'product-link-featured': featured }]} href={href}>
+    items.map(({ icon: IconCmp, tag, href, copy: [title, body], featured, external }) => (
+      <a
+        class:list={['card', 'product-link', { 'product-link-featured': featured }]}
+        href={href}
+        {...(external ? { target: '_blank', rel: 'noopener' } : {})}
+      >
         <span class="product-link-top">
           <span class="product-link-icon">
             <IconCmp size={20} aria-hidden="true" />
