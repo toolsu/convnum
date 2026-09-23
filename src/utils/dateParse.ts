@@ -1,13 +1,15 @@
+import { parseSuffixDate } from './cjkDate'
 import {
-  DateInterpretation,
+  type DateInterpretation,
   MONTH_NAMES,
-  ParseDateResult,
+  type ParseDateResult,
   SEPARATORS,
 } from './dateFormat'
 import { compareDateFormatOrder } from './orders'
 
 /**
  * Month format types and their patterns
+ * @category Date
  */
 const MONTH_FORMATS = {
   M2: {
@@ -27,6 +29,7 @@ const MONTH_FORMATS = {
 
 /**
  * Day format types and their patterns
+ * @category Date
  */
 const DAY_FORMATS = {
   D2: {
@@ -44,26 +47,32 @@ const DAY_FORMATS = {
 
 /**
  * Year format pattern
+ * @category Date
  */
 const YEAR_PATTERN = /^(\d{4})$/
 
 /**
  * Converts a month name to month number (1-12)
+ * @category Date
  */
 function monthNameToNumber(monthStr: string): number | null {
   const lowerMonth = monthStr.toLowerCase()
 
   // Check full month names
   const fullIndex = MONTH_NAMES.full.findIndex(
-    (name) => name.toLowerCase() === lowerMonth,
+    (name) => name.toLowerCase() === lowerMonth
   )
-  if (fullIndex !== -1) return fullIndex + 1
+  if (fullIndex !== -1) {
+    return fullIndex + 1
+  }
 
   // Check short month names
   const shortIndex = MONTH_NAMES.short.findIndex(
-    (name) => name.toLowerCase() === lowerMonth,
+    (name) => name.toLowerCase() === lowerMonth
   )
-  if (shortIndex !== -1) return shortIndex + 1
+  if (shortIndex !== -1) {
+    return shortIndex + 1
+  }
 
   return null
 }
@@ -72,13 +81,18 @@ type DateComponent = { type: 'Y' | 'M' | 'D'; value: number; format: string }
 
 /**
  * Gets all possible interpretations for a date component
+ * @category Date
  */
 function getAllPossibleComponents(component: string): DateComponent[] {
   const results: DateComponent[] = []
 
   // Check if it's a year
   if (YEAR_PATTERN.test(component)) {
-    results.push({ type: 'Y', value: parseInt(component, 10), format: 'Y' })
+    results.push({
+      type: 'Y',
+      value: Number.parseInt(component, 10),
+      format: 'Y',
+    })
   }
 
   // Check month formats (both M1 and M2 can match the same value to generate all format combinations)
@@ -102,7 +116,7 @@ function getAllPossibleComponents(component: string): DateComponent[] {
 
       if ('min' in formatInfo) {
         // Numeric month
-        value = parseInt(component, 10)
+        value = Number.parseInt(component, 10)
         if (value < formatInfo.min || value > formatInfo.max) continue
 
         // Special check for M1: allow zero-padded numbers to be interpreted as non-padded
@@ -127,6 +141,19 @@ function getAllPossibleComponents(component: string): DateComponent[] {
     }
   }
 
+  // "May" is the only month whose short and full names are identical, so the
+  // Mf-family patterns (which require 4+ letters) never match it. Emit the
+  // matching full-name interpretation too, so that formatDateString(ts, 'Mf …')
+  // output round-trips back through parseDateString.
+  const mayFullFormat: Record<string, string> = {
+    May: 'Mf',
+    may: 'Mfl',
+    MAY: 'Mfu',
+  }
+  if (mayFullFormat[component]) {
+    results.push({ type: 'M', value: 5, format: mayFullFormat[component] })
+  }
+
   // Check day formats (both D1 and D2 can match the same value to generate all format combinations)
   const dayFormats: Array<{
     key: string
@@ -138,7 +165,7 @@ function getAllPossibleComponents(component: string): DateComponent[] {
 
   for (const { key: formatKey, info: formatInfo } of dayFormats) {
     if (formatInfo.pattern.test(component)) {
-      const value = parseInt(component, 10)
+      const value = Number.parseInt(component, 10)
       if (value < formatInfo.min || value > formatInfo.max) continue
 
       // Special check for D1: allow zero-padded numbers to be interpreted as non-padded
@@ -162,10 +189,15 @@ function getAllPossibleComponents(component: string): DateComponent[] {
 
 /**
  * Generates all possible combinations from arrays of possibilities
+ * @category Date
  */
 function generateAllCombinations(arrays: DateComponent[][]): DateComponent[][] {
-  if (arrays.length === 0) return []
-  if (arrays.length === 1) return arrays[0].map((item) => [item])
+  if (arrays.length === 0) {
+    return []
+  }
+  if (arrays.length === 1) {
+    return arrays[0].map((item) => [item])
+  }
 
   const result: DateComponent[][] = []
   const restCombinations = generateAllCombinations(arrays.slice(1))
@@ -190,21 +222,27 @@ function generateAllCombinations(arrays: DateComponent[][]): DateComponent[][] {
  * - Y-M-D format: time defaults to 00:00:00.000
  * - M-D format: year defaults to 1970
  *
- * @remarks For year-month only dates (no day component), the result includes a `months` property
- * representing the number of months since 1970-01 (where 1970-01 = 0, 1970-02 = 1, etc.).
- *
  * @param dateStr - The date string to parse (e.g., "2023-01-05", "25.12.2023", "Jan 15, 2023")
  * @returns Array of all possible interpretations, each with timestamp, format, and optionally months,
  * sorted by format priority (see {@link compareDateFormatOrder} function)
  * @throws Error if the date string format is not recognized or invalid
  *
+ * @remarks
+ * - For year-month only dates (no day component), the result includes a `months` property
+ *   representing the number of months since 1970-01 (where 1970-01 = 0, 1970-02 = 1, etc.).
+ * - Timestamps are local-timezone midnights of each interpreted date. The
+ *   `days`/`months` properties are timezone-independent calendar counts
+ *   (UTC-based), and are negative for pre-1970 dates.
+ *
  * @example
  * ```ts
  * parseDateString('2023-01-05')
  * // [
- * //   { timestamp: 1672876800000, format: 'Y-M2-D2' },  // Jan 5, 2023
- * //   { timestamp: 1683763200000, format: 'Y-D2-M2' }   // May 1, 2023
- * // ]
+ * //   { timestamp: ..., format: 'Y-M2-D2', days: ... },  // Jan 5, 2023
+ * //   { timestamp: ..., format: 'Y-M2-D1', days: ... },
+ * //   { timestamp: ..., format: 'Y-M1-D2', days: ... },
+ * //   { timestamp: ..., format: 'Y-M1-D1', days: ... }
+ * // ]  // all Jan 5, 2023 (YDM is not a recognized layout)
  *
  * parseDateString('25.12.2023')
  * // [{ timestamp: 1703462400000, format: 'D1.M1.Y' }]  // Dec 25, 2023
@@ -218,10 +256,19 @@ function generateAllCombinations(arrays: DateComponent[][]): DateComponent[][] {
  * parseDateString('Jan 2024')
  * // [{ timestamp: 1704067200000, format: 'Ms Y', months: 648 }]  // Jan 1, 2024, 648 months since 1970-01
  * ```
+ * @category Date
  */
 export function parseDateString(dateStr: string): ParseDateResult {
   const trimmed = dateStr.trim()
   const interpretations: DateInterpretation[] = []
+
+  // Suffix-labelled layouts first. Each field says what it is, so there is exactly one
+  // reading and no separator to guess at — and none of the separator patterns below can
+  // match them anyway.
+  const suffixed = parseSuffixDate(trimmed)
+  if (suffixed.length > 0) {
+    return suffixed
+  }
 
   // Try each separator
   for (const separator of SEPARATORS) {
@@ -245,7 +292,7 @@ export function parseDateString(dateStr: string): ParseDateResult {
 
     // Get all possible interpretations for each part
     const allPossibleComponents = parts.map((part) =>
-      getAllPossibleComponents(part.trim()),
+      getAllPossibleComponents(part.trim())
     )
 
     // Check if all parts have valid interpretations
@@ -382,19 +429,17 @@ export function parseDateString(dateStr: string): ParseDateResult {
       if (!dayComp) {
         interpretation.months = (year - 1970) * 12 + (month - 1)
       } else {
-        // Add days property if this is NOT a year-month only date (has day)
-        const baseDate = new Date(1970, 0, 1) // Jan 1, 1970
-        const currentDate = new Date(year, month - 1, day)
-        interpretation.days = Math.floor(
-          (currentDate.getTime() - baseDate.getTime()) / (1000 * 60 * 60 * 24),
-        )
+        // Add days property if this is NOT a year-month only date (has day).
+        // Use UTC calendar arithmetic: local-midnight subtraction is off by one
+        // across DST transitions (a spring-forward day is only 23h long).
+        interpretation.days = Date.UTC(year, month - 1, day) / 86400000
       }
 
       // Avoid duplicates (same format and timestamp)
       const isDuplicate = interpretations.some(
         (interp) =>
           interp.format === interpretation.format &&
-          interp.timestamp === interpretation.timestamp,
+          interp.timestamp === interpretation.timestamp
       )
 
       if (!isDuplicate) {

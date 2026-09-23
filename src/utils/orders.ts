@@ -1,4 +1,5 @@
-import { NumType } from './types'
+import { freeze } from './freeze'
+import type { NumType } from './types'
 
 /**
  * Array of all valid conversion types (excluding special types 'invalid', 'empty', 'unknown')
@@ -28,13 +29,17 @@ import { NumType } from './types'
  * 16. `octal`
  * 17. `hexadecimal`
  * 18. `arabic`
- * 19. `english_cardinal`
- * 20. `english_words`
- * 21. `french_words`
- * 22. `astrological_sign`
- * 23. `nato_phonetic`
+ * 19. `english_ordinal_abbr`
+ * 20. `french_ordinal_abbr`
+ * 21. `english_words`
+ * 22. `english_ordinal_words`
+ * 23. `french_words`
+ * 24. `french_ordinal_words`
+ * 25. `astrological_sign`
+ * 26. `nato_phonetic`
+ * @category Numeral Types
  */
-export const VALID_NUM_TYPES: NumType[] = [
+export const VALID_NUM_TYPES: readonly NumType[] = freeze([
   'decimal',
   'latin_letter',
   'month_name',
@@ -53,12 +58,15 @@ export const VALID_NUM_TYPES: NumType[] = [
   'octal',
   'hexadecimal',
   'arabic',
-  'english_cardinal',
+  'english_ordinal_abbr',
+  'french_ordinal_abbr',
   'english_words',
+  'english_ordinal_words',
   'french_words',
+  'french_ordinal_words',
   'astrological_sign',
   'nato_phonetic',
-]
+])
 
 /**
  * Compare two num types based on their order in the {@link VALID_NUM_TYPES} array
@@ -90,11 +98,15 @@ export const VALID_NUM_TYPES: NumType[] = [
  * 16. `octal`
  * 17. `hexadecimal`
  * 18. `arabic`
- * 19. `english_cardinal`
- * 20. `english_words`
- * 21. `french_words`
- * 22. `astrological_sign`
- * 23. `nato_phonetic`
+ * 19. `english_ordinal_abbr`
+ * 20. `french_ordinal_abbr`
+ * 21. `english_words`
+ * 22. `english_ordinal_words`
+ * 23. `french_words`
+ * 24. `french_ordinal_words`
+ * 25. `astrological_sign`
+ * 26. `nato_phonetic`
+ * @category Numeral Types
  */
 export const compareNumTypeOrder = (a: NumType, b: NumType) => {
   return VALID_NUM_TYPES.indexOf(a) - VALID_NUM_TYPES.indexOf(b)
@@ -102,6 +114,7 @@ export const compareNumTypeOrder = (a: NumType, b: NumType) => {
 
 /**
  * Extract pattern information from a date format string
+ * @category Numeral Types
  */
 function getFormatPattern(format: string): {
   priority: number
@@ -146,11 +159,11 @@ function getFormatPattern(format: string): {
     'D,M': 7,
   }
 
-  // Handle special named month formats (space separators, comma-space)
+  // Handle special named-month format that has no numeric-pattern equivalent
+  // ("January 1, 2023"). Other named-month layouts (M Y, Y-M, M-Y) normalize to
+  // the same keys as their numeric counterparts above, so they are already
+  // scored by patternPriorities.
   const namedMonthPatterns: { [key: string]: number } = {
-    'M Y': 8, // "January 2023"
-    'Y-M': 9, // "2023-January"
-    'M-Y': 10, // "January-2023"
     'M D, Y': 11, // "January 1, 2023"
   }
 
@@ -169,19 +182,13 @@ function getFormatPattern(format: string): {
   else if (format.includes(' ')) separatorPriority = 4
 
   // Calculate specificity score (M2/D2 should come before M1/D1)
-  let specificityScore = 0
   const m2Count = (format.match(/M2/g) || []).length
   const d2Count = (format.match(/D2/g) || []).length
   const m1Count = (format.match(/M1/g) || []).length
   const d1Count = (format.match(/D1/g) || []).length
 
   // Higher specificity (M2/D2) gets lower score (sorts first)
-  specificityScore = m1Count + d1Count - (m2Count + d2Count)
-
-  // For named months, use alphabetical order as secondary sort
-  if (priority >= 8) {
-    specificityScore += format.localeCompare(format) * 0.01
-  }
+  const specificityScore = m1Count + d1Count - (m2Count + d2Count)
 
   return {
     priority,
@@ -220,11 +227,12 @@ function getFormatPattern(format: string): {
  * 5. `, `
  * 6. ` `
  *
- * then by format specificity (M2/D2 before M1/D1)
+ * then by format specificity (M2/D2 should come before M1/D1)
+ * @category Numeral Types
  */
 export function compareDateFormatOrder(
   formatA: string,
-  formatB: string,
+  formatB: string
 ): number {
   const patternA = getFormatPattern(formatA)
   const patternB = getFormatPattern(formatB)

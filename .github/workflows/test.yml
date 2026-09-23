@@ -3,27 +3,73 @@ name: Test
 on:
   push:
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - '.editorconfig'
+      - "README.md"
+      - "LICENSE"
+      - ".editorconfig"
+      - "docs/**"
     branches:
       - main
   pull_request:
     paths-ignore:
-      - 'README.md'
-      - 'LICENSE'
-      - '.editorconfig'
+      - "README.md"
+      - "LICENSE"
+      - ".editorconfig"
+      - "docs/**"
     branches:
       - main
 
 jobs:
-  test:
+  lint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - name: Set up Bun
         uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
       - name: Install modules
         run: bun install
-      - name: Run prettier + eslint + ts typecheck + tests
-        run: bun checkall
+      - name: Format + lint
+        run: bun run check
+      - name: Type check
+        run: bun run typecheck
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        # Run the suite across several timezones (both hemispheres, plus a zone
+        # where 1970-01-01 was in DST) to guard against timezone-dependent bugs
+        # in the date functions.
+        tz:
+          - UTC
+          - Europe/Paris
+          - America/New_York
+          - Australia/Sydney
+          - America/Santiago
+    env:
+      TZ: ${{ matrix.tz }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - name: Install modules
+        run: bun install
+      - name: Run tests (TZ=${{ matrix.tz }})
+        run: bun test
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Set up Bun
+        uses: oven-sh/setup-bun@v2
+        with:
+          bun-version: 1.3.10
+      - name: Install modules
+        run: bun install
+      - name: Build package
+        run: bun run build

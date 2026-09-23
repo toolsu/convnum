@@ -50,6 +50,7 @@ const tPatternText = `[${t2sKeys.join('|')}]`
  *   - 2: at least one character is in the range
  *   - 3: all characters are in the range
  * @returns The RegExp object
+ * @category Chinese Numeral
  */
 function patternTextToRegExp(text: string, mode: 0 | 1 | 2 | 3): RegExp {
   switch (mode) {
@@ -75,6 +76,7 @@ function patternTextToRegExp(text: string, mode: 0 | 1 | 2 | 3): RegExp {
  *   - 2: at least one character is in the range
  *   - 3: all characters are in the range
  * @returns boolean
+ * @category Chinese Numeral
  */
 export const isZh = (text: string, mode: 1 | 2 | 3) =>
   patternTextToRegExp(zhPatternText, mode).test(text)
@@ -96,6 +98,7 @@ const tReplPattern = patternTextToRegExp(tPatternText, 0)
  *   - 1: the text is Traditional Chinese for sure (at least one is in tPattern, no one is in sPattern)
  *   - -1: the text is mixed of Simplified and Traditional (at least one is in sPattern, and at least one is in tPattern)
  *   - 2: not sure if it is Simplified or Traditional (no one is in sPattern, and no one is in tPattern)
+ * @category Chinese Numeral
  */
 export const isZhTOrS = (text: string) => {
   if (!isZh(text, 3)) {
@@ -122,11 +125,13 @@ export const isZhTOrS = (text: string) => {
  *
  * @param text Simplified Chinese string 简体字符串
  * @returns Traditional Chinese string 繁体字符串
+ * @category Chinese Numeral
  */
 export function s2t(text: string) {
-  return text.replace(sReplPattern, function (char) {
-    return s2tMap[char as keyof typeof s2tMap]
-  })
+  return text.replace(
+    sReplPattern,
+    (char) => s2tMap[char as keyof typeof s2tMap]
+  )
 }
 
 /**
@@ -136,9 +141,11 @@ export function s2t(text: string) {
  *
  * @param text Traditional Chinese string 繁体字符串
  * @returns Simplified Chinese string 简体字符串
+ * @category Chinese Numeral
  */
 export function t2s(text: string) {
-  return text.replace(tReplPattern, function (char) {
-    return t2sMap[char as keyof typeof t2sMap]
-  })
+  return text.replace(
+    tReplPattern,
+    (char) => t2sMap[char as keyof typeof t2sMap]
+  )
 }

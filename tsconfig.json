@@ -1,19 +1,18 @@
 {
   "compilerOptions": {
-    "target": "es2015",
+    // Type-checking only (noEmit); the published bundle's syntax target is set
+    // by tsdown. Node >=18 supports all of ES2022.
+    "target": "ES2022",
     "module": "ESNext",
-    "moduleResolution": "Node",
+    "moduleResolution": "bundler",
+    "types": ["bun"],
     "strict": true,
     "declaration": true,
-    "declarationMap": true,
-    "emitDeclarationOnly": false,
-    "outDir": "dist",
-    "rootDir": "src",
+    "noEmit": true,
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true,
     "allowImportingTsExtensions": false
   },
-  "include": ["src", "test/astrosign.test.ts"],
-  "exclude": ["node_modules", "**/*.test.ts", "dist"]
+  "include": ["src/**/*", "test/**/*"]
 }

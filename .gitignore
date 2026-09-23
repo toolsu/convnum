@@ -1,5 +1,3 @@
-docs/
-/test.ts
 *.tgz
 
 # Node modules
@@ -8,6 +6,12 @@ node_modules/
 # Build output
 dist/
 *.tsbuildinfo
+
+# Docs (Astro + Starlight)
+docs/dist/
+docs/.astro/
+docs/src/content/docs/api/
+_pagefind/
 
 # Logs
 npm-debug.log*
@@ -20,7 +24,6 @@ lerna-debug.log*
 # Editor & OS files
 .DS_Store
 Thumbs.db
-.vscode/
 .idea/
 *.swp
 
@@ -32,14 +35,6 @@ tsconfig.tsbuildinfo
 .tap/
 coverage/
 .nyc_output/
-
-# Linting & Formatting
-.eslintcache
-.prettier.cache
-
-# Vite
-.vite/
-.vitest/
 
 # Miscellaneous
 *.log

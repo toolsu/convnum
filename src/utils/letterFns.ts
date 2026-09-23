@@ -1,7 +1,7 @@
 export function toLetter(
   num: number,
   baseCharCode: number,
-  length: number,
+  length: number
 ): string {
   if (num < 1 || num > length || !Number.isInteger(num)) {
     throw new Error(`Input must be an integer between 1 and ${length}`)
@@ -12,9 +12,9 @@ export function toLetter(
 export function fromLetter(
   letter: string,
   baseCharCode: number | number[],
-  length: number,
+  length: number
 ): number {
-  if (!letter || letter.length !== 1) {
+  if (letter?.length !== 1) {
     throw new Error('Input must be a single letter')
   }
   const charCode = letter.charCodeAt(0)
@@ -42,6 +42,7 @@ export function fromLetter(
  * capitalizeFirstLetter('WORLD') // returns 'World'
  * capitalizeFirstLetter('tEsT') // returns 'Test'
  * ```
+ * @internal
  */
 export function capitalizeFirstLetter(str: string): string {
   if (!str) {

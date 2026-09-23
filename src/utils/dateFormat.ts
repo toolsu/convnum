@@ -1,13 +1,18 @@
+import { formatSuffixDate, isSuffixFormat } from './cjkDate'
+import { freeze } from './freeze'
+
 /**
  * Supported separators for date strings
+ * @category Date
  */
-export const SEPARATORS = ['-', '.', '/', ',', ', ', ' '] as const
+export const SEPARATORS = freeze(['-', '.', '/', ',', ', ', ' '] as const)
 
 /**
  * Month names for conversion
+ * @category Date
  */
-export const MONTH_NAMES = {
-  full: [
+export const MONTH_NAMES = freeze({
+  full: freeze([
     'January',
     'February',
     'March',
@@ -20,8 +25,8 @@ export const MONTH_NAMES = {
     'October',
     'November',
     'December',
-  ],
-  short: [
+  ]),
+  short: freeze([
     'Jan',
     'Feb',
     'Mar',
@@ -34,30 +39,37 @@ export const MONTH_NAMES = {
     'Oct',
     'Nov',
     'Dec',
-  ],
-}
+  ]),
+})
 
 /**
  * Individual interpretation of a date string
+ * @category Date
  */
 export interface DateInterpretation {
-  /** Unix timestamp in milliseconds for this interpretation */
+  /** Unix timestamp in milliseconds for this interpretation * @category Date
+   */
   timestamp: number
-  /** Format string for this interpretation (e.g., "Y-M2-D2") */
+  /** Format string for this interpretation (e.g., "Y-M2-D2") * @category Date
+   */
   format: string
-  /** Number of months after 1970-01 (only present for year-month only dates) */
+  /** Number of months after 1970-01 (only present for year-month only dates) * @category Date
+   */
   months?: number
-  /** Number of days after 1970-01-01 (only present for dates with day components) */
+  /** Number of days after 1970-01-01 (only present for dates with day components) * @category Date
+   */
   days?: number
 }
 
 /**
  * Result of date string parsing containing all possible interpretations
+ * @category Date
  */
 export type ParseDateResult = DateInterpretation[]
 
 /**
  * Converts month number to formatted month string
+ * @category Date
  */
 function numberToMonthName(monthNum: number, format: string): string {
   const monthIndex = monthNum - 1
@@ -80,7 +92,7 @@ function numberToMonthName(monthNum: number, format: string): string {
     case 'Msu':
       return MONTH_NAMES.short[monthIndex].toUpperCase()
     default:
-      return monthNum.toString()
+      throw new Error(`Invalid month format: "${format}"`)
   }
 }
 
@@ -103,6 +115,7 @@ function numberToMonthName(monthNum: number, format: string): string {
  * formatDateString(1703462400000, 'D2/M2/Y') // '25/12/2023'
  * formatDateString(1703462400000, 'Mf D1, Y') // 'December 25, 2023'
  * ```
+ * @category Date
  */
 export function formatDateString(timestamp: number, format: string): string {
   const date = new Date(timestamp)
@@ -110,8 +123,14 @@ export function formatDateString(timestamp: number, format: string): string {
   const month = date.getMonth() + 1
   const day = date.getDate()
 
+  // A suffix-labelled layout carries its own literals and spacing, so writing it back is
+  // substitution rather than joining parts with a separator.
+  if (isSuffixFormat(format)) {
+    return formatSuffixDate(format, year, month, day)
+  }
+
   // Find the separator used in the format - prioritize comma-space
-  let separator: string = ''
+  let separator = ''
   let formatParts: string[]
 
   // Check for comma-space pattern first (like "Month Day, Year")
@@ -139,7 +158,7 @@ export function formatDateString(timestamp: number, format: string): string {
 
     if (!separator) {
       throw new Error(
-        `Invalid format: no recognized separator found in "${format}"`,
+        `Invalid format: no recognized separator found in "${format}"`
       )
     }
 
@@ -151,9 +170,11 @@ export function formatDateString(timestamp: number, format: string): string {
     const trimmedPart = part.trim()
     if (trimmedPart === 'Y') {
       return year.toString()
-    } else if (trimmedPart.startsWith('M')) {
+    }
+    if (trimmedPart.startsWith('M')) {
       return numberToMonthName(month, trimmedPart)
-    } else if (trimmedPart.startsWith('D')) {
+    }
+    if (trimmedPart.startsWith('D')) {
       switch (trimmedPart) {
         case 'D1':
           return day.toString()
@@ -162,18 +183,16 @@ export function formatDateString(timestamp: number, format: string): string {
         default:
           throw new Error(`Invalid day format: "${trimmedPart}"`)
       }
-    } else {
-      throw new Error(`Invalid format component: "${trimmedPart}"`)
     }
+    throw new Error(`Invalid format component: "${trimmedPart}"`)
   })
 
   // Reconstruct the result with proper separator handling
   if (separator === ', ' && formatParts.length === 3) {
     // Handle "Month Day, Year" format by joining as "month day, year"
     return `${resultParts[0]} ${resultParts[1]}, ${resultParts[2]}`
-  } else {
-    return resultParts.join(separator)
   }
+  return resultParts.join(separator)
 }
 
 /**
@@ -194,15 +213,34 @@ export function formatDateString(timestamp: number, format: string): string {
  * formatDayString(358, 'Ms D1, Y') // 'Dec 25, 1970'
  * formatDayString(19723, 'Mf D1, Y') // 'December 25, 2023'
  * ```
+ * @category Date
  */
 export function formatDayString(days: number, format: string): string {
-  // Convert days to timestamp
-  const baseDate = new Date(1970, 0, 1) // Jan 1, 1970
-  const timestamp = baseDate.getTime() + days * 24 * 60 * 60 * 1000
+  // `days` is a UTC day count. Recover the calendar date via UTC, then rebuild
+  // it as a LOCAL-midnight timestamp so formatDateString (which reads local
+  // components) prints the correct day in every timezone, including zones where
+  // 1970-01-01 was in DST. Adding exact 24h multiples to a local base date would
+  // drift by a day across DST boundaries.
+  const utc = new Date(days * 86400000)
+  const local = new Date(
+    utc.getUTCFullYear(),
+    utc.getUTCMonth(),
+    utc.getUTCDate()
+  )
+  const timestamp = local.getTime()
+
+  if (isSuffixFormat(format)) {
+    return formatSuffixDate(
+      format,
+      utc.getUTCFullYear(),
+      utc.getUTCMonth() + 1,
+      utc.getUTCDate()
+    )
+  }
 
   // Validate that format contains day components
   // Find the separator used in the format
-  let separator: string = ''
+  let separator = ''
   let formatParts: string[]
 
   // Check for comma-space pattern first (like "Month Day, Year")
@@ -234,7 +272,7 @@ export function formatDayString(days: number, format: string): string {
 
     if (!separator) {
       throw new Error(
-        `Invalid format: no recognized separator found in "${format}"`,
+        `Invalid format: no recognized separator found in "${format}"`
       )
     }
 
@@ -253,7 +291,7 @@ export function formatDayString(days: number, format: string): string {
 
   if (!hasDayComponent) {
     throw new Error(
-      `Invalid format for day string: format "${format}" must contain day component (D1 or D2)`,
+      `Invalid format for day string: format "${format}" must contain day component (D1 or D2)`
     )
   }
 
@@ -278,14 +316,20 @@ export function formatDayString(days: number, format: string): string {
  * formatMonthString(0, 'Mf Y') // 'January 1970'
  * formatMonthString(11, 'Ms Y') // 'Dec 1970'
  * ```
+ * @category Date
  */
 export function formatMonthString(months: number, format: string): string {
-  // Convert months to year and month
+  // Convert months to year and month using floored modulo so pre-1970 dates
+  // (negative `months`, which parseDateString emits) format correctly.
   const year = Math.floor(months / 12) + 1970
-  const month = (months % 12) + 1
+  const month = (((months % 12) + 12) % 12) + 1
+
+  if (isSuffixFormat(format)) {
+    return formatSuffixDate(format, year, month, 1)
+  }
 
   // Find the separator used in the format
-  let separator: string = ''
+  let separator = ''
   let formatParts: string[]
 
   // Check for comma-space pattern first (like "Month Day, Year")
@@ -317,7 +361,7 @@ export function formatMonthString(months: number, format: string): string {
 
     if (!separator) {
       throw new Error(
-        `Invalid format: no recognized separator found in "${format}"`,
+        `Invalid format: no recognized separator found in "${format}"`
       )
     }
 
@@ -329,7 +373,7 @@ export function formatMonthString(months: number, format: string): string {
     const trimmedPart = part.trim()
     if (trimmedPart.startsWith('D')) {
       throw new Error(
-        `Invalid format for month string: day component "${trimmedPart}" not allowed`,
+        `Invalid format for month string: day component "${trimmedPart}" not allowed`
       )
     }
     if (!trimmedPart.startsWith('Y') && !trimmedPart.startsWith('M')) {
@@ -342,18 +386,17 @@ export function formatMonthString(months: number, format: string): string {
     const trimmedPart = part.trim()
     if (trimmedPart === 'Y') {
       return year.toString()
-    } else if (trimmedPart.startsWith('M')) {
-      return numberToMonthName(month, trimmedPart)
-    } else {
-      throw new Error(`Invalid format component: "${trimmedPart}"`)
     }
+    if (trimmedPart.startsWith('M')) {
+      return numberToMonthName(month, trimmedPart)
+    }
+    throw new Error(`Invalid format component: "${trimmedPart}"`)
   })
 
   // Reconstruct the result with proper separator handling
   if (separator === ', ' && formatParts.length === 3) {
     // Handle "Month Day, Year" format by joining as "month day, year"
     return `${resultParts[0]} ${resultParts[1]}, ${resultParts[2]}`
-  } else {
-    return resultParts.join(separator)
   }
+  return resultParts.join(separator)
 }
