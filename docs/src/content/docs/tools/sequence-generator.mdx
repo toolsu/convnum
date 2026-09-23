@@ -1,0 +1,18 @@
+---
+title: Sequence Generator
+description: Generate a numeric sequence in any numeral type, or convert a pasted sequence to numbers or another type.
+tableOfContents: false
+---
+
+import SequenceGenerator from '../../../components/SequenceGenerator.tsx'
+
+Two modes:
+
+- **Generate a sequence**: pick a type, a starting value (as an Arabic number
+  _or_ in that type's own form, e.g. `IV` for Roman), a count and a step. The
+  sequence is shown in the chosen type, in a second type of your choice, and in
+  decimal. Circular types (letters, months, signs…) wrap around automatically.
+- **Convert a sequence**: paste a comma- or newline-separated sequence. The
+  shared type is auto-detected, then converted to numbers or any other type.
+
+<SequenceGenerator client:load />

@@ -1,0 +1,57 @@
+---
+import { ArrowRightLeft, ArrowUpRight, ListOrdered, TextCursorInput } from '@lucide/astro'
+
+const routeLocale = Astro.locals.starlightRoute.locale
+const base = routeLocale ? `/${routeLocale}` : ''
+const key = routeLocale === 'zh-cn' || routeLocale === 'fr' ? routeLocale : 'en'
+
+const text = {
+  en: {
+    online: 'Online tool',
+    vscode: 'VS Code extension',
+    converter: ['Numeral Converter', 'Type into any field and read the value in every supported numeral system at once.'],
+    sequence: ['Sequence Generator', 'Generate a sequence in any type, or detect and convert a pasted list.'],
+    rt: ['Range & Transform', 'Fill multi-cursor selections with Mon:Fri or 一:十, or rewrite them with JavaScript.'],
+  },
+  'zh-cn': {
+    online: '在线工具',
+    vscode: 'VS Code 扩展',
+    converter: ['数字转换器', '在任意字段输入，立即看到它在所有支持的数字体系中的写法。'],
+    sequence: ['序列生成器', '按任意类型生成序列，或识别并转换粘贴进来的列表。'],
+    rt: ['Range & Transform', '用 Mon:Fri、一:十 这样的范围填充多光标选区，或用 JavaScript 改写选区。'],
+  },
+  fr: {
+    online: 'Outil en ligne',
+    vscode: 'Extension VS Code',
+    converter: ['Convertisseur de nombres', 'Saisissez dans n’importe quel champ et lisez la valeur dans tous les systèmes pris en charge.'],
+    sequence: ['Générateur de séquences', 'Générez une séquence dans n’importe quel type, ou détectez et convertissez une liste collée.'],
+    rt: ['Range & Transform', 'Remplissez des sélections multiples avec Mon:Fri ou 一:十, ou réécrivez-les en JavaScript.'],
+  },
+}[key]
+
+const items = [
+  { icon: ArrowRightLeft, tag: text.online, href: `${base}/tools/numeral-conversion/`, copy: text.converter },
+  { icon: ListOrdered, tag: text.online, href: `${base}/tools/sequence-generator/`, copy: text.sequence },
+  { icon: TextCursorInput, tag: text.vscode, href: `${base}/range-transform/`, copy: text.rt, featured: true },
+]
+---
+
+<div class="product-links not-content">
+  {
+    items.map(({ icon: IconCmp, tag, href, copy: [title, body], featured }) => (
+      <a class:list={['card', 'product-link', { 'product-link-featured': featured }]} href={href}>
+        <span class="product-link-top">
+          <span class="product-link-icon">
+            <IconCmp size={20} aria-hidden="true" />
+          </span>
+          <span class="product-link-tag">{tag}</span>
+        </span>
+        <span class="product-link-title">
+          {title}
+          <ArrowUpRight class="product-link-arrow" size={18} aria-hidden="true" />
+        </span>
+        <span class="product-link-body">{body}</span>
+      </a>
+    ))
+  }
+</div>

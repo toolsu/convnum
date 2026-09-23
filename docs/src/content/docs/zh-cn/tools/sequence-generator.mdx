@@ -1,0 +1,14 @@
+---
+title: 序列生成器
+description: 用任意数字类型生成数值序列，或将粘贴的序列转换为数字及其他类型。
+tableOfContents: false
+---
+
+import SequenceGenerator from '../../../../components/SequenceGenerator.tsx'
+
+提供两种模式：
+
+- **生成序列**：选择类型、起始值（阿拉伯数字，或该类型本身的写法，例如罗马数字 `IV`）、数量和步长。结果会同时显示所选类型、另一种指定类型及十进制表示。字母、月份、星座等循环类型会自动循环。
+- **转换序列**：粘贴以逗号或换行分隔的序列。工具会自动识别所有项目共有的类型，并转换成数字或其他类型。
+
+<SequenceGenerator locale="zh-CN" client:load />

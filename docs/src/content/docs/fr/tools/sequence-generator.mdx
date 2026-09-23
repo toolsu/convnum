@@ -1,0 +1,14 @@
+---
+title: Générateur de séquences
+description: Générez une suite dans le type numérique de votre choix ou convertissez une suite collée.
+tableOfContents: false
+---
+
+import SequenceGenerator from '../../../../components/SequenceGenerator.tsx'
+
+Deux modes sont disponibles :
+
+- **Générer une séquence** : choisissez le type, la valeur initiale (un nombre arabe ou une valeur écrite dans ce type, comme `IV` en chiffres romains), le nombre d’éléments et le pas. La suite apparaît dans le type choisi, dans un second type et en décimal. Les types cycliques (lettres, mois, signes…) bouclent automatiquement.
+- **Convertir une séquence** : collez des valeurs séparées par des virgules ou des retours à la ligne. Leur type commun est détecté automatiquement, puis les valeurs sont converties en nombres ou dans un autre type.
+
+<SequenceGenerator locale="fr" client:load />

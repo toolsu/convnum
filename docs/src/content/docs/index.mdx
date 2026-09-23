@@ -1,0 +1,140 @@
+---
+title: convnum
+description: Convert, validate, detect and format numbers across numeral systems, languages, and date formats.
+template: splash
+hero:
+  tagline: Convert, validate, detect and format numbers across numeral systems, languages, and date formats, with zero runtime dependencies.
+  image:
+    light: ../../../public/images/logo/icon.svg
+    dark: ../../../public/images/logo/icon.svg
+  actions:
+    - text: Numeral Converter
+      link: /tools/numeral-conversion/
+      icon: right-arrow
+    - text: API Reference
+      link: /api/readme/
+      variant: minimal
+    - text: View on GitHub
+      link: https://github.com/toolsu/convnum
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
+import ProductLinks from '../../components/ProductLinks.astro'
+import RangeTransformSection from '../../components/RangeTransformSection.astro'
+
+## Tools
+
+<ProductLinks />
+
+## Installation
+
+<Tabs syncKey="pkg">
+<TabItem label="npm">
+
+```sh
+npm install convnum
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```sh
+pnpm add convnum
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```sh
+yarn add convnum
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```sh
+bun add convnum
+```
+
+</TabItem>
+</Tabs>
+
+## Usage
+
+```ts
+import { toEnglishWords, fromChineseWords, convertTo, anyToNumber } from 'convnum'
+
+toEnglishWords(12345) // 'twelve thousand three hundred forty-five'
+fromChineseWords('一万二千三百四十五') // 12345
+convertTo(2024, { type: 'roman' }) // 'MMXXIV'
+anyToNumber('vingt-et-un') // 21
+```
+
+<CardGrid stagger>
+  <Card title="Many numeral systems" icon="seti:default">
+    Decimal, Roman, bases 2–36, Eastern Arabic, English / French / Chinese
+    words and ordinals, Latin / Greek / Cyrillic / Hebrew letters, NATO
+    phonetic, months, days, astrological signs, Chinese stems / branches /
+    solar terms, and more.
+  </Card>
+  <Card title="Detect & validate" icon="approve-check">
+    `getTypes()` identifies every possible type of a string (with case, format,
+    prefix, script and style info); per-type `validate*` functions check strict
+    correctness.
+  </Card>
+  <Card title="Universal converter" icon="random">
+    `convertFrom()`, `convertTo()` and `anyToNumber()` move between any two
+    representations, preserving case, prefix, zero-padding and UK/US style.
+  </Card>
+  <Card title="Dates too" icon="clock">
+    Parse ambiguous date strings into all interpretations, format them back,
+    and convert to/from Julian Day. Timezone-safe.
+  </Card>
+</CardGrid>
+
+<h2 id="range-transform">Range &amp; Transform for VS Code</h2>
+
+<RangeTransformSection />
+
+## Supported Types
+
+`NumType` is the union of every representation the library understands. See the
+[API reference](/api/readme/) for the full list, and try them live in the
+[Numeral Converter](/tools/numeral-conversion/) and
+[Sequence Generator](/tools/sequence-generator/). Every one of them can also start a
+range in [Range & Transform](/range-transform/insert-sequence/).
+
+| Name | `NumType` | Examples |
+| --- | --- | --- |
+| Decimal | `decimal` (alias `dec`) | `123`, `456` |
+| Latin letters | `latin_letter` | `A`, `b`, `Z` |
+| Month | `month_name` | `January`, `JAN`, `février` |
+| Day of week | `day_of_week` | `Monday`, `MON`, `mardi` |
+| Roman numerals | `roman` | `VI`, `vi`, `MMMCMXCIX` |
+| Eastern Arabic | `arabic` | `٠`, `١`, `٢` |
+| English words | `english_words` | `one hundred twenty-three` |
+| English ordinal words | `english_ordinal_words` | `first`, `twenty-first` |
+| English ordinal abbr. | `english_ordinal_abbr` | `1st`, `2nd`, `3rd` |
+| French words | `french_words` | `cent-vingt-trois` |
+| French ordinal words | `french_ordinal_words` | `premier`, `vingt-et-unième` |
+| French ordinal abbr. | `french_ordinal_abbr` | `1er`, `1re`, `2e` |
+| Chinese words | `chinese_words` | `一万三千零二`, `一萬三千零二` |
+| Chinese financial | `chinese_financial` | `壹万叁仟零贰` |
+| Binary | `binary` (alias `bin`) | `1010`, `0b1101` |
+| Octal | `octal` (alias `oct`) | `777`, `0o456` |
+| Hexadecimal | `hexadecimal` (alias `hex`) | `1A`, `0xFF` |
+| Greek letters | `greek_letter` | `Α`, `α`, `Ω` |
+| Greek letter names | `greek_letter_english_name` | `Alpha`, `BETA` |
+| Cyrillic letters | `cyrillic_letter` | `А`, `я` |
+| Hebrew letters | `hebrew_letter` | `א`, `ת` |
+| Chinese Heavenly Stems | `chinese_heavenly_stem` | `甲`, `乙` |
+| Chinese Earthly Branches | `chinese_earthly_branch` | `子`, `丑` |
+| Chinese Solar Terms | `chinese_solar_term` | `立春`, `惊蛰` |
+| Astrological signs | `astrological_sign` | `Aries`, `Pisces` |
+| NATO phonetic | `nato_phonetic` | `Alfa`, `Bravo` |
+
+## Changelog
+
+See the [CHANGELOG](https://github.com/toolsu/convnum/blob/main/CHANGELOG.md) on GitHub.

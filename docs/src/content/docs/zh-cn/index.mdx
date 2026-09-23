@@ -1,0 +1,129 @@
+---
+title: convnum
+description: 在不同数字体系、语言和日期格式之间转换、校验、识别与格式化。
+template: splash
+hero:
+  tagline: 在不同数字体系、语言和日期格式之间转换、校验、识别与格式化，无运行时依赖。
+  image:
+    light: ../../../../public/images/logo/icon.svg
+    dark: ../../../../public/images/logo/icon.svg
+  actions:
+    - text: 数字转换器
+      link: /zh-cn/tools/numeral-conversion/
+      icon: right-arrow
+    - text: API 参考
+      link: /api/readme/
+      variant: minimal
+    - text: GitHub
+      link: https://github.com/toolsu/convnum
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
+import ProductLinks from '../../../components/ProductLinks.astro'
+import RangeTransformSection from '../../../components/RangeTransformSection.astro'
+
+## 工具
+
+<ProductLinks />
+
+## 安装
+
+<Tabs syncKey="pkg">
+<TabItem label="npm">
+
+```sh
+npm install convnum
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```sh
+pnpm add convnum
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```sh
+yarn add convnum
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```sh
+bun add convnum
+```
+
+</TabItem>
+</Tabs>
+
+## 用法
+
+```ts
+import { toEnglishWords, fromChineseWords, convertTo, anyToNumber } from 'convnum'
+
+toEnglishWords(12345) // 'twelve thousand three hundred forty-five'
+fromChineseWords('一万二千三百四十五') // 12345
+convertTo(2024, { type: 'roman' }) // 'MMXXIV'
+anyToNumber('vingt-et-un') // 21
+```
+
+<CardGrid stagger>
+  <Card title="丰富的数字体系" icon="seti:default">
+    支持十进制、罗马数字、2–36 进制、东阿拉伯数字、英语／法语／中文数字及序数词、拉丁／希腊／西里尔／希伯来字母、北约音标、月份、星期、星座、天干地支与二十四节气等。
+  </Card>
+  <Card title="识别与校验" icon="approve-check">
+    `getTypes()` 会找出字符串可能属于的所有类型，并提供大小写、格式、前缀、文字与风格信息；各类型的 `validate*` 函数可严格校验输入。
+  </Card>
+  <Card title="通用转换" icon="random">
+    `convertFrom()`、`convertTo()` 和 `anyToNumber()` 可在不同表示形式之间转换，并保留大小写、前缀、补零和英式／美式风格。
+  </Card>
+  <Card title="日期处理" icon="clock">
+    将有歧义的日期字符串解析为所有可能的日期、重新格式化，并与儒略日互相转换；处理过程不受时区影响。
+  </Card>
+</CardGrid>
+
+<h2 id="range-transform">Range &amp; Transform：VS Code 扩展</h2>
+
+<RangeTransformSection />
+
+## 支持的类型
+
+`NumType` 汇总了库支持的所有表示形式。完整列表见[API 参考](/api/readme/)；也可以在[数字转换器](/zh-cn/tools/numeral-conversion/)和[序列生成器](/zh-cn/tools/sequence-generator/)中试用。每一种类型都可以作为 [Range & Transform](/zh-cn/range-transform/insert-sequence/) 中范围的起点。
+
+| 名称 | `NumType` | 示例 |
+| --- | --- | --- |
+| 十进制 | `decimal`（别名 `dec`） | `123`, `456` |
+| 拉丁字母 | `latin_letter` | `A`, `b`, `Z` |
+| 月份 | `month_name` | `January`, `JAN`, `février` |
+| 星期 | `day_of_week` | `Monday`, `MON`, `mardi` |
+| 罗马数字 | `roman` | `VI`, `vi`, `MMMCMXCIX` |
+| 东阿拉伯数字 | `arabic` | `٠`, `١`, `٢` |
+| 英语数字词 | `english_words` | `one hundred twenty-three` |
+| 英语序数词 | `english_ordinal_words` | `first`, `twenty-first` |
+| 英语序数词缩写 | `english_ordinal_abbr` | `1st`, `2nd`, `3rd` |
+| 法语数字词 | `french_words` | `cent-vingt-trois` |
+| 法语序数词 | `french_ordinal_words` | `premier`, `vingt-et-unième` |
+| 法语序数词缩写 | `french_ordinal_abbr` | `1er`, `1re`, `2e` |
+| 中文数字 | `chinese_words` | `一万三千零二`, `一萬三千零二` |
+| 中文大写数字 | `chinese_financial` | `壹万叁仟零贰` |
+| 二进制 | `binary`（别名 `bin`） | `1010`, `0b1101` |
+| 八进制 | `octal`（别名 `oct`） | `777`, `0o456` |
+| 十六进制 | `hexadecimal`（别名 `hex`） | `1A`, `0xFF` |
+| 希腊字母 | `greek_letter` | `Α`, `α`, `Ω` |
+| 希腊字母英文名称 | `greek_letter_english_name` | `Alpha`, `BETA` |
+| 西里尔字母 | `cyrillic_letter` | `А`, `я` |
+| 希伯来字母 | `hebrew_letter` | `א`, `ת` |
+| 天干 | `chinese_heavenly_stem` | `甲`, `乙` |
+| 地支 | `chinese_earthly_branch` | `子`, `丑` |
+| 二十四节气 | `chinese_solar_term` | `立春`, `惊蛰` |
+| 星座 | `astrological_sign` | `Aries`, `Pisces` |
+| 北约音标 | `nato_phonetic` | `Alfa`, `Bravo` |
+
+## 更新日志
+
+参见 GitHub 上的 [CHANGELOG](https://github.com/toolsu/convnum/blob/main/CHANGELOG.md)。

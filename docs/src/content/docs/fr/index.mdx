@@ -1,0 +1,138 @@
+---
+title: convnum
+description: Convertir, valider, reconnaître et formater les nombres dans différents systèmes, langues et formats de date.
+template: splash
+hero:
+  tagline: Convertissez, validez, reconnaissez et formatez les nombres, sans dépendance à l’exécution.
+  image:
+    light: ../../../../public/images/logo/icon.svg
+    dark: ../../../../public/images/logo/icon.svg
+  actions:
+    - text: Convertisseur de nombres
+      link: /fr/tools/numeral-conversion/
+      icon: right-arrow
+    - text: Référence API
+      link: /api/readme/
+      variant: minimal
+    - text: GitHub
+      link: https://github.com/toolsu/convnum
+      icon: external
+      variant: minimal
+---
+
+import { Card, CardGrid, Tabs, TabItem } from '@astrojs/starlight/components'
+import ProductLinks from '../../../components/ProductLinks.astro'
+import RangeTransformSection from '../../../components/RangeTransformSection.astro'
+
+## Outils
+
+<ProductLinks />
+
+## Installation
+
+<Tabs syncKey="pkg">
+<TabItem label="npm">
+
+```sh
+npm install convnum
+```
+
+</TabItem>
+<TabItem label="pnpm">
+
+```sh
+pnpm add convnum
+```
+
+</TabItem>
+<TabItem label="yarn">
+
+```sh
+yarn add convnum
+```
+
+</TabItem>
+<TabItem label="bun">
+
+```sh
+bun add convnum
+```
+
+</TabItem>
+</Tabs>
+
+## Utilisation
+
+```ts
+import { toEnglishWords, fromChineseWords, convertTo, anyToNumber } from 'convnum'
+
+toEnglishWords(12345) // 'twelve thousand three hundred forty-five'
+fromChineseWords('一万二千三百四十五') // 12345
+convertTo(2024, { type: 'roman' }) // 'MMXXIV'
+anyToNumber('vingt-et-un') // 21
+```
+
+<CardGrid stagger>
+  <Card title="De nombreux systèmes" icon="seti:default">
+    Décimal, chiffres romains, bases 2 à 36, chiffres arabes orientaux, nombres et ordinaux
+    en anglais, français et chinois, lettres latines, grecques, cyrilliques et hébraïques,
+    alphabet phonétique de l’OTAN, mois, jours, signes astrologiques et bien plus.
+  </Card>
+  <Card title="Reconnaître et valider" icon="approve-check">
+    `getTypes()` recense tous les types possibles d’une chaîne, avec les informations de casse,
+    de format, de préfixe, d’écriture et de style. Les fonctions `validate*` vérifient chaque type.
+  </Card>
+  <Card title="Conversion universelle" icon="random">
+    `convertFrom()`, `convertTo()` et `anyToNumber()` passent d’une représentation à une autre
+    en conservant la casse, le préfixe, les zéros initiaux et le style britannique ou américain.
+  </Card>
+  <Card title="Gestion des dates" icon="clock">
+    Analysez toutes les interprétations possibles d’une date ambiguë, reformatez-la et
+    convertissez-la depuis ou vers le jour julien, sans dépendre du fuseau horaire.
+  </Card>
+</CardGrid>
+
+<h2 id="range-transform">Range &amp; Transform pour VS Code</h2>
+
+<RangeTransformSection />
+
+## Types pris en charge
+
+`NumType` regroupe toutes les représentations comprises par la bibliothèque. Consultez la
+[référence API](/api/readme/) pour la liste complète, puis essayez le
+[convertisseur de nombres](/fr/tools/numeral-conversion/) et le
+[générateur de séquences](/fr/tools/sequence-generator/). Chacune peut aussi servir de
+début de plage dans [Range & Transform](/fr/range-transform/insert-sequence/).
+
+| Nom | `NumType` | Exemples |
+| --- | --- | --- |
+| Décimal | `decimal` (alias `dec`) | `123`, `456` |
+| Lettres latines | `latin_letter` | `A`, `b`, `Z` |
+| Mois | `month_name` | `January`, `JAN`, `février` |
+| Jour de la semaine | `day_of_week` | `Monday`, `MON`, `mardi` |
+| Chiffres romains | `roman` | `VI`, `vi`, `MMMCMXCIX` |
+| Chiffres arabes orientaux | `arabic` | `٠`, `١`, `٢` |
+| Nombres en anglais | `english_words` | `one hundred twenty-three` |
+| Ordinaux en anglais | `english_ordinal_words` | `first`, `twenty-first` |
+| Abréviations ordinales anglaises | `english_ordinal_abbr` | `1st`, `2nd`, `3rd` |
+| Nombres en français | `french_words` | `cent-vingt-trois` |
+| Ordinaux en français | `french_ordinal_words` | `premier`, `vingt-et-unième` |
+| Abréviations ordinales françaises | `french_ordinal_abbr` | `1er`, `1re`, `2e` |
+| Nombres en chinois | `chinese_words` | `一万三千零二`, `一萬三千零二` |
+| Chiffres financiers chinois | `chinese_financial` | `壹万叁仟零贰` |
+| Binaire | `binary` (alias `bin`) | `1010`, `0b1101` |
+| Octal | `octal` (alias `oct`) | `777`, `0o456` |
+| Hexadécimal | `hexadecimal` (alias `hex`) | `1A`, `0xFF` |
+| Lettres grecques | `greek_letter` | `Α`, `α`, `Ω` |
+| Noms des lettres grecques en anglais | `greek_letter_english_name` | `Alpha`, `BETA` |
+| Lettres cyrilliques | `cyrillic_letter` | `А`, `я` |
+| Lettres hébraïques | `hebrew_letter` | `א`, `ת` |
+| Troncs célestes chinois | `chinese_heavenly_stem` | `甲`, `乙` |
+| Branches terrestres chinoises | `chinese_earthly_branch` | `子`, `丑` |
+| Termes solaires chinois | `chinese_solar_term` | `立春`, `惊蛰` |
+| Signes astrologiques | `astrological_sign` | `Aries`, `Pisces` |
+| Alphabet phonétique de l’OTAN | `nato_phonetic` | `Alfa`, `Bravo` |
+
+## Historique des versions
+
+Consultez le [CHANGELOG](https://github.com/toolsu/convnum/blob/main/CHANGELOG.md) sur GitHub.
