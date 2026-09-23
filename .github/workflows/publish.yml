@@ -31,7 +31,7 @@ jobs:
         with:
           bun-version: 1.3.10
 
-      # Staged publishing needs the npm CLI (11.15.0 or later), not `bun publish`.
+      # Trusted publishing needs the npm CLI (11.5.1 or later), not `bun publish`.
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
@@ -52,8 +52,5 @@ jobs:
       - name: Build package
         run: bun run build
 
-      # The trusted publisher may only stage: the version goes live once a maintainer
-      # approves it with 2FA, in the Staged Packages tab on npmjs.com or with
-      # `npm stage approve <stage-id>`.
-      - name: Stage the release on npm
-        run: npm stage publish
+      - name: Publish to npm
+        run: npm publish --access public
