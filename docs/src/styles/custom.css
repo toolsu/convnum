@@ -703,12 +703,25 @@ starlight-menu-button[aria-expanded='true'] button {
 }
 
 .hero-x-actions {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 0.6rem 1.1rem;
+  display: grid;
+  justify-items: start;
+  gap: 0.5rem;
   margin-top: 0.4rem;
   animation: hero-rise 900ms var(--cn-ease-out) 180ms both;
+}
+
+.hero-x-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6rem 0.75rem;
+}
+
+/* Text links line up with the buttons' edge despite their own inline padding. */
+.hero-x-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0 1.1rem;
+  margin-inline-start: -0.35rem;
 }
 
 @keyframes hero-rise {
