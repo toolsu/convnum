@@ -10,6 +10,7 @@ dist/
 # Docs (Astro + Starlight)
 docs/dist/
 docs/out/
+docs/.wrangler/
 docs/.astro/
 docs/src/content/docs/api/
 _pagefind/

@@ -7,9 +7,9 @@ import { createStarlightTypeDocPlugin } from 'starlight-typedoc'
 const [starlightTypeDoc, typeDocSidebarGroup] = createStarlightTypeDocPlugin()
 const libraryEntry = fileURLToPath(new URL('../src/index.ts', import.meta.url))
 
-// Served at https://toolsu.com/convnum/ through a Cloudflare Worker that forwards the
-// path to this site's Cloudflare Pages project. `build:pages` nests the output under
-// out/convnum/ so the Pages deployment has the same paths as production.
+// Served at https://toolsu.com/convnum/ by a Cloudflare Worker with static assets (see
+// wrangler.jsonc). `build:pages` nests the output under out/convnum/ so the files sit at
+// the same paths as their URLs.
 // https://astro.build/config
 export default defineConfig({
   site: 'https://toolsu.com',
